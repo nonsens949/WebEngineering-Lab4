@@ -58,7 +58,6 @@ public class JeopardyDAO implements IGameDAO {
      */
     @Override
     public void persist(BaseEntity entity) {
-        // TODO: Implement Method
     	em().persist(entity);
     	return;
     }
