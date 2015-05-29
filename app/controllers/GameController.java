@@ -2,6 +2,7 @@ package controllers;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -18,7 +19,11 @@ import play.data.Form;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.Results;
 import play.mvc.Security;
+import twitter.ITwitterClient;
+import twitter.TwitterClient;
+import twitter.TwitterStatusMessage;
 import views.html.jeopardy;
 import views.html.question;
 import views.html.winner;
@@ -99,7 +104,12 @@ public class GameController extends Controller {
 			return ok(question.render(game));
 		} else if(game.isGameOver()) {
 			Logger.info("[" + request().username() + "] Game over... redirect");
-			return ok(winner.render(game));
+			
+			//TODO replace string with actual uuid
+			String uuid = "no uuid righ now";
+			boolean success = publishUuid(uuid);
+			
+			return ok(winner.render(game, success, uuid));
 		}			
 		return ok(jeopardy.render(game));
 	}
@@ -156,7 +166,34 @@ public class GameController extends Controller {
 		if(game == null || !game.isGameOver())
 			return redirect(routes.GameController.playGame());
 		
-		Logger.info("[" + request().username() + "] Game over.");		
-		return ok(winner.render(game));
+		Logger.info("[" + request().username() + "] Game over.");	
+		
+		//TODO replace string with actual uuid
+		String uuid = "no uuid righ now";
+		boolean success = publishUuid(uuid);
+		
+		return ok(winner.render(game, success, uuid));
+	}
+	
+	public static boolean publishUuid(String uuid){
+		
+		TwitterStatusMessage twitterMessage = new TwitterStatusMessage(request().username(), uuid, new Date());
+		
+		ITwitterClient twitterClient = new TwitterClient();
+		
+		boolean success = true;
+		try{
+			twitterClient.publishUuid(twitterMessage);
+		} catch (Exception e){
+			success = false;
+			play.Logger.error("Exception caught while publishing UUID");
+		}	
+		if(success){
+			play.Logger.info("Publishing the UUID was successful");
+		} else {
+			play.Logger.info("Publishing the UUID failed");
+		}
+		
+		return success;
 	}
 }

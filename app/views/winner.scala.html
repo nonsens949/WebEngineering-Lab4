@@ -1,4 +1,4 @@
-@(game: models.JeopardyGame)
+@(game: models.JeopardyGame, success: Boolean, uuid: String)
 @import play.i18n._
 @import helper._
 
@@ -6,6 +6,18 @@
       <!-- Content -->
       <div role="main">
 		@gameInfo(game.getLeader(), game.getSecond(), game.getMaxQuestions(), game.isHumanPlayer(game.getLeader().getUser()))
+		<section id="twitter_result">
+			<h2 id="twitter_result_heading class="accessibility">
+			<p class="user-info">
+				@Messages.get("twitter.uuid")
+				@if(success){
+					uuid @Messages.get("twitter.success")
+				}else{
+					@Messages.get("twitter.fail")
+				}		
+			</p>
+			</h2>
+		</section>
          <section id="newgame" aria-labelledby="newgameheading">
              <h2 id="newgameheading" class="accessibility">@Messages.get("quizover.newgame")</h2>
              @helper.form(routes.GameController.newGame()) {

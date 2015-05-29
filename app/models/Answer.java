@@ -1,17 +1,26 @@
 package models;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+
 
 /**
  * Represents an answer which is stored in the DB
  */
+@Entity
 public class Answer extends BaseEntity {
 
-
+	@Column(name="text_de")
     private String textDE;
+	
+	@Column(name="text_en")
     private String textEN;
 
+	@Column(name="correct_answer")
     private Boolean correctAnswer;
 
+    @ManyToOne
     private Question question;
 
     /**

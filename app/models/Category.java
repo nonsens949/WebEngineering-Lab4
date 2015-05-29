@@ -5,17 +5,26 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
+
 /**
  * Represents a category, which is stored in the DB
  */
+@Entity
 public class Category extends BaseEntity {
 
-
+	@Column(name="name_de")
     private String nameDE;
+	
+	@Column(name="name_en")
     private String nameEN;
 
-
     //A list of questions in this category
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "category")
     private List<Question> questions = new ArrayList<Question>();
     
     /**
