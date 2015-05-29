@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+	<xsd:element name="Looser" type="player" minOccurs="0" maxOccurs="1"/>
+	<xsd:element name="Winner" type="player" minOccurs="0" maxOccurs="1"/>
+	<xsd:complexType name="player">
+		<xsd:sequence>
+			<xsd:element name="Password" type="xsd:string"/>
+			<xsd:element name="FirstName" type="xsd:string"/>
+			<xsd:element name="LastName" type="xsd:string"/>
+			<xsd:element name="Points" type="xsd:integer"/>
+		</xsd:sequence>
+		<xsd:attribute name="BirthDate" type="xsd:date"/>
+		<xsd:attribute name="Gender">
+			<xsd:simpleType>
+				<xsd:restriction base="xsd:string">
+					<xsd:enumeration value="female">
+					<xsd:enumeration value="male">
+				</xsd:restriction>
+			</xsd:simpleType>
+		</xsd:attribute>
+	</xsd:complexType>
+</xsd:schema>
