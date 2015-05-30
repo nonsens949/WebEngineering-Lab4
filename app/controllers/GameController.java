@@ -1,11 +1,5 @@
 package controllers;
 
-import highscore.Failure;
-import highscore.PublishHighScoreEndpoint;
-import highscore.PublishHighScoreService;
-import highscore.data.HighScoreRequestType;
-import highscore.jeopardyGame.Loser;
-import highscore.jeopardyGame.Winner;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -20,6 +14,16 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
+
+import at.ac.tuwien.big.we.highscore.Failure;
+import at.ac.tuwien.big.we.highscore.FailureType;
+import at.ac.tuwien.big.we.highscore.PublishHighScoreEndpoint;
+import at.ac.tuwien.big.we.highscore.PublishHighScoreService;
+import at.ac.tuwien.big.we.highscore.data.GenderType;
+import at.ac.tuwien.big.we.highscore.data.HighScoreRequestType;
+import at.ac.tuwien.big.we.highscore.data.UserDataType;
+import at.ac.tuwien.big.we.highscore.data.UserType;
 import ch.qos.logback.core.rolling.helper.DateTokenConverter;
 import models.Category;
 import models.JeopardyDAO;
@@ -221,38 +225,99 @@ public class GameController extends Controller {
 		PublishHighScoreEndpoint highScoreEndpoint = highScoreService.getPublishHighScorePort();
 		play.Logger.info("Schritt 2 GameController");
 		
+		//HighScoreRequestType
 		HighScoreRequestType highScoreRequestType = new HighScoreRequestType();
 		highScoreRequestType.setUserKey("3ke93-gue34-dkeu9");
 		play.Logger.info("Schritt 3 GameController");
 		
-		highscore.data.UserData userData = new highscore.data.UserData();
 		
-		///Loser//
-		Loser loser = new Loser();
-		loser.setPassword(game.getLoser().getUser().getPassword());
-		loser.setFirstname(game.getLoser().getUser().getFirstName());
-		loser.setLastname(game.getLoser().getUser().getLastName());
-		loser.setGender(game.getLoser().getUser().getGender().toString());
-		loser.setBirthdate(dateToXMLGregorianCalendar(game.getLoser().getUser().getBirthDate()));
-		loser.setPoints(game.getLoser().getProfit());
-		userData.setLoser(loser);
-		
+		//Loser//
+		UserType loser = new UserType();
 		//Winner//
-		Winner winner = new Winner();
-		winner.setPassword(game.getWinner().getUser().getPassword());
-		winner.setFirstname(game.getWinner().getUser().getFirstName());
-		winner.setLastname(game.getWinner().getUser().getLastName());
-		winner.setBirthdate(dateToXMLGregorianCalendar(game.getWinner().getUser().getBirthDate()));
-		winner.setGender(game.getWinner().getUser().getGender().toString());
+		UserType winner = new UserType();
+		
+		//Password
+		loser.setPassword("");
+		winner.setPassword("");
+		
+		//Firstname
+		String loserFirstname = game.getLoser().getUser().getFirstName();
+		play.Logger.info("LoserFirstname " + loserFirstname);
+		if(loserFirstname == ""){
+			loser.setFirstName("Anonymus");
+		}else{
+			loser.setFirstName(loserFirstname);
+		}
+			
+		String winnerFirstname = game.getWinner().getUser().getFirstName();
+		if(winnerFirstname == ""){
+			winner.setFirstName("Anonymus");
+		}else{
+			winner.setFirstName(winnerFirstname);
+		}
+		
+		//Lastname
+		String loserLastname = game.getLoser().getUser().getLastName();
+		if(loserLastname == ""){
+			loser.setLastName("Anonym");
+		}else{
+			loser.setLastName(loserLastname);
+		}
+		
+		String winnerLastname = game.getWinner().getUser().getLastName();
+		if(winnerLastname == ""){
+			winner.setLastName("Anonym");
+		}else{
+			winner.setLastName(winnerLastname);
+		}
+		
+		//Birthdate
+		XMLGregorianCalendar loserBirthday = dateToXMLGregorianCalendar(game.getLoser().getUser().getBirthDate());
+		if(loserBirthday == null){
+			loser.setBirthDate(dateToXMLGregorianCalendar(new Date(1900,1,1)));
+		}else{
+			loser.setBirthDate(loserBirthday);
+		}
+		
+		XMLGregorianCalendar winnerBirthday = dateToXMLGregorianCalendar(game.getWinner().getUser().getBirthDate());
+		if(winnerBirthday == null){
+			winner.setBirthDate(dateToXMLGregorianCalendar(new Date(1900,1,1)));
+		}else{
+			winner.setBirthDate(winnerBirthday);
+		}
+		
+		//Gender
+		GenderType genderLoser = GenderType.fromValue(game.getLoser().getUser().getGender().toString());
+		if(genderLoser == null){
+			loser.setGender(GenderType.MALE);
+		}else{
+			loser.setGender(genderLoser);
+		}
+		
+		GenderType genderWinner = GenderType.fromValue(game.getWinner().getUser().getGender().toString());
+		if(genderWinner == null){
+			winner.setGender(GenderType.MALE);
+		}else{
+			winner.setGender(genderWinner);
+		}
+		
+		//Points
+		loser.setPoints(game.getLoser().getProfit());
 		winner.setPoints(game.getWinner().getProfit());
+		
+		//UserDataType
+		UserDataType userData = new UserDataType();
+		userData.setLoser(loser);
 		userData.setWinner(winner);
 		
 		highScoreRequestType.setUserData(userData);
+		
 		
 		try{
 			play.Logger.info("Schritt 4 GameController");
 			String highScoreUUID = highScoreEndpoint.publishHighScore(highScoreRequestType);
 			play.Logger.info("HighScore UUID published" + highScoreUUID);
+			return highScoreUUID;
 		}catch(Failure e){
 			play.Logger.error("Publish Highscore Service Error", e);
 		}

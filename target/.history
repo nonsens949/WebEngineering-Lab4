@@ -4,3 +4,5 @@ end
 finish
 exit
 run
+run -encoding UTF-8
+run
