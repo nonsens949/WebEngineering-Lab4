@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "FailureType", propOrder = {"Code","Reason","Detail"})
+@XmlType(name = "FailureType", propOrder = {"code","reason","detail"})
 public class FailureType {
 	
 	@XmlElement(name = "Code", required = true)
@@ -29,7 +29,7 @@ public class FailureType {
 	@XmlElement(name = "Reason", required = true)
 	protected String reason;
 	
-	@XmlElement(name = "Detail", required = true)
+	@XmlElement(name = "Detail")
 	protected String detail;
 
 	/**

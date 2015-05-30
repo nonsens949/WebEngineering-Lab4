@@ -98,3 +98,7 @@ jeopardy.chosen2=
 jeopardy.for=for
 jeopardy.choose=choose
 jeopardy.answer=answer
+
+twitter.uuid = UUID
+twitter.success = was published on Twitter
+twitter.fail = unfortunately could not be published on Twitter

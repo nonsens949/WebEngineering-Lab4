@@ -1,12 +1,26 @@
 package controllers;
 
+import highscore.Failure;
+import highscore.PublishHighScoreEndpoint;
+import highscore.PublishHighScoreService;
+import highscore.data.HighScoreRequestType;
+import highscore.jeopardyGame.Loser;
+import highscore.jeopardyGame.Winner;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+
+import ch.qos.logback.core.rolling.helper.DateTokenConverter;
 import models.Category;
 import models.JeopardyDAO;
 import models.JeopardyGame;
@@ -106,10 +120,11 @@ public class GameController extends Controller {
 			Logger.info("[" + request().username() + "] Game over... redirect");
 			
 			//TODO replace string with actual uuid
-			String uuid = "no uuid righ now";
+			String uuid = publishHighScore(game);
 			boolean success = publishUuid(uuid);
 			
 			return ok(winner.render(game, success, uuid));
+			//return ok(winner.render(game));
 		}			
 		return ok(jeopardy.render(game));
 	}
@@ -169,10 +184,11 @@ public class GameController extends Controller {
 		Logger.info("[" + request().username() + "] Game over.");	
 		
 		//TODO replace string with actual uuid
-		String uuid = "no uuid righ now";
+		String uuid = publishHighScore(game);
 		boolean success = publishUuid(uuid);
 		
 		return ok(winner.render(game, success, uuid));
+		//return ok(winner.render(game));
 	}
 	
 	public static boolean publishUuid(String uuid){
@@ -195,5 +211,79 @@ public class GameController extends Controller {
 		}
 		
 		return success;
+	}
+	
+	///HighScore-Service///
+	private static String publishHighScore(JeopardyGame game){
+		
+		PublishHighScoreService highScoreService = new PublishHighScoreService();
+		play.Logger.info("Schritt 1 GameController");
+		PublishHighScoreEndpoint highScoreEndpoint = highScoreService.getPublishHighScorePort();
+		play.Logger.info("Schritt 2 GameController");
+		
+		HighScoreRequestType highScoreRequestType = new HighScoreRequestType();
+		highScoreRequestType.setUserKey("3ke93-gue34-dkeu9");
+		play.Logger.info("Schritt 3 GameController");
+		
+		highscore.data.UserData userData = new highscore.data.UserData();
+		
+		///Loser//
+		Loser loser = new Loser();
+		loser.setPassword(game.getLoser().getUser().getPassword());
+		loser.setFirstname(game.getLoser().getUser().getFirstName());
+		loser.setLastname(game.getLoser().getUser().getLastName());
+		loser.setGender(game.getLoser().getUser().getGender().toString());
+		loser.setBirthdate(dateToXMLGregorianCalendar(game.getLoser().getUser().getBirthDate()));
+		loser.setPoints(game.getLoser().getProfit());
+		userData.setLoser(loser);
+		
+		//Winner//
+		Winner winner = new Winner();
+		winner.setPassword(game.getWinner().getUser().getPassword());
+		winner.setFirstname(game.getWinner().getUser().getFirstName());
+		winner.setLastname(game.getWinner().getUser().getLastName());
+		winner.setBirthdate(dateToXMLGregorianCalendar(game.getWinner().getUser().getBirthDate()));
+		winner.setGender(game.getWinner().getUser().getGender().toString());
+		winner.setPoints(game.getWinner().getProfit());
+		userData.setWinner(winner);
+		
+		highScoreRequestType.setUserData(userData);
+		
+		try{
+			play.Logger.info("Schritt 4 GameController");
+			String highScoreUUID = highScoreEndpoint.publishHighScore(highScoreRequestType);
+			play.Logger.info("HighScore UUID published" + highScoreUUID);
+		}catch(Failure e){
+			play.Logger.error("Publish Highscore Service Error", e);
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * This method converts Date to XMLGregorianCalendar
+	 * @param date
+	 * @return
+	 */
+	private static XMLGregorianCalendar dateToXMLGregorianCalendar(Date date){
+		if(date == null){
+			return null;
+		}
+		XMLGregorianCalendar xmlCalendar;
+		GregorianCalendar calendar = new GregorianCalendar();
+		calendar.setTime(date);
+		
+		try{
+			xmlCalendar = DatatypeFactory.newInstance().newXMLGregorianCalendar();
+			xmlCalendar.setYear(calendar.get(Calendar.YEAR));
+			xmlCalendar.setMonth(calendar.get(Calendar.MONTH)+1);
+			xmlCalendar.setDay(calendar.get(Calendar.DAY_OF_MONTH));
+			return xmlCalendar;
+			
+		}catch(DatatypeConfigurationException e){
+			play.Logger.error("DatatypeConfigurationException", e);
+		}
+		
+		return null;
 	}
 }

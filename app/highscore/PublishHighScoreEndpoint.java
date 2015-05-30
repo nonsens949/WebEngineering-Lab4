@@ -1,4 +1,3 @@
-
 package highscore;
 
 import highscore.data.HighScoreRequestType;
@@ -28,7 +27,6 @@ public interface PublishHighScoreEndpoint {
 
 
     /**
-     * 
      *
      * @param in
      * @return

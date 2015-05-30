@@ -10,8 +10,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "UserData" , propOrder = {"Loser","Winner"})
-@XmlRootElement(namespace = "http://big.tuwien.ac.at/we/highscore/data", name = "HighScoreRequet")
+@XmlType(name = "UserData" , propOrder = {"loser","winner"})
+@XmlRootElement(namespace = "http://big.tuwien.ac.at/we/highscore/data", name = "HighScoreRequest")
 public class UserData {
 	
 	@XmlElement(namespace = "", required = true)

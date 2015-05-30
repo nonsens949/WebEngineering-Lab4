@@ -2,8 +2,10 @@ package highscore.jeopardyGame;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
+@XmlType(name = "", propOrder={"password","firstname","lastname","points"})
 public class PlayerType {
 	
 	@XmlElement(required = true)

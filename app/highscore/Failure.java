@@ -18,6 +18,7 @@ public class Failure extends Exception{
 	public Failure(String message, FailureType failure){
 		super(message);
 		this.failure = failure;
+		play.Logger.info("Schritt 10");
 	}
 	
 	/**
@@ -27,8 +28,9 @@ public class Failure extends Exception{
 	 * @param cause  another throwable that caused this throwable to be constructed
 	 */
 	public Failure(String message, FailureType failure, Throwable cause){
-		super(message);
+		super(message,cause);
 		this.failure = failure;
+		play.Logger.info("Schritt 11");
 	}
 	
 	/**
@@ -36,7 +38,9 @@ public class Failure extends Exception{
 	 * @return
 	 */
 	public FailureType getInfo(){
+		play.Logger.info("Schritt 12");
 		return this.failure;
+		
 	}
 	
 }

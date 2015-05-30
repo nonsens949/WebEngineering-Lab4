@@ -14,7 +14,7 @@ public class ObjectFactory {
 	 * This method creates a new instance of ObjectFactory
 	 */
 	public ObjectFactory(){
-		
+		play.Logger.info("Schritt 13");
 	}
 	
 	/**
@@ -22,11 +22,13 @@ public class ObjectFactory {
 	 * @return
 	 */
 	public FailureType createFailureType(){
+		play.Logger.info("Schritt 14");
 		return new FailureType();
 	}
 	
 	@XmlElementDecl(namespace = "http://big.tuwien.ac.at/we/highscore", name = "Failure")
     public JAXBElement<FailureType> createFailure(FailureType value) {
+		play.Logger.info("Schritt 15");
         return new JAXBElement<FailureType>(_Failure_QName, FailureType.class, null, value);
     }
 	

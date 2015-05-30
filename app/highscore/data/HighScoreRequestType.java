@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "HighScoreRequestType", propOrder={"UserKey" , "UserData"})
+@XmlType(name = "HighScoreRequestType", propOrder={"userKey" , "userData"})
 
 @XmlRootElement(namespace = "http://big.tuwien.ac.at/we/highscore/data", name = "HighScoreRequest")
 public class HighScoreRequestType {
