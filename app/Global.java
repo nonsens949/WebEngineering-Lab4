@@ -23,6 +23,13 @@ public class Global extends GlobalSettings {
 	}
 	
 	@play.db.jpa.Transactional
+	public static void insertLodData() {	
+		Logger.info("Data from: dbpedia");
+		List<Category> categories = LODDataInserter.insertData();
+		Logger.info(categories.size() + " categories from dbpedia inserted.");
+	}
+	
+	@play.db.jpa.Transactional
     public void onStart(Application app) {
        try {
     	   JPA.withTransaction(new Function0<Boolean>() {
@@ -30,6 +37,7 @@ public class Global extends GlobalSettings {
 			@Override
 			public Boolean apply() throws Throwable {
 				insertJSonData();
+				insertLodData();
 				return true;
 			}
 			   
